@@ -224,13 +224,13 @@ sudo ./b2 install
     
     ```
 
-### 运行指令
+    ### 运行指令
 
-```
-# rosrun ORB_SLAM3 Stereo_Inertial '/home/pf/allVersionSLAM/ORB_SLAM3/Vocabulary/ORBvoc.txt' '/home/pf/allVersionSLAM/ORB_SLAM3/Examples/Stereo-Inertial/EuRoC.yaml' false
+    ```
+    # rosrun ORB_SLAM3 Stereo_Inertial '/home/pf/allVersionSLAM/ORB_SLAM3/Vocabulary/ORBvoc.txt' '/home/pf/allVersionSLAM/ORB_SLAM3/Examples/Stereo-Inertial/EuRoC.yaml' false
+    
+    # "Usage: rosrun ORB_SLAM3 Stereo_Inertial path_to_vocabulary path_to_settings do_rectify [do_equalize]"
+    ```
 
-# "Usage: rosrun ORB_SLAM3 Stereo_Inertial path_to_vocabulary path_to_settings do_rectify [do_equalize]"
-```
-
-对应脚本文件：`rosrun_ORB_SLAM3StereoEuroc.sh.sh`
+    对应脚本文件：`rosrun_ORB_SLAM3StereoEuroc.sh.sh`
 
