@@ -226,11 +226,133 @@ sudo ./b2 install
 
     ### 运行指令
 
-    ```
+    ```bash
     # rosrun ORB_SLAM3 Stereo_Inertial '/home/pf/allVersionSLAM/ORB_SLAM3/Vocabulary/ORBvoc.txt' '/home/pf/allVersionSLAM/ORB_SLAM3/Examples/Stereo-Inertial/EuRoC.yaml' false
     
     # "Usage: rosrun ORB_SLAM3 Stereo_Inertial path_to_vocabulary path_to_settings do_rectify [do_equalize]"
     ```
 
     对应脚本文件：`rosrun_ORB_SLAM3StereoEuroc.sh.sh`
+
+# 三、VINS-fusion环境配置
+## 软件环境为：
+- ceres-solver-1.14.0
+- eigen-3.2.5
+- opencv 3.2.0
+
+**安装ceres出现版本与eigen不匹配问题，解决方法**
+
+报错如下：
+
+```
+/home/zll/library/ceres-solver-1.14.0/internal/ceres/gtest/gtest.h:10445:35: error: variable or field ‘it’ declared void
+10445 |   for (typename C::const_iterator it = container.begin();
+      |                                   ^~ 
+```
+
+解决方法
+
+    首先安装eigen，然后安装ceres
+
+###  3.1 安装eigen
+
+- 现在/usr目录下建立eigen3目录
+
+    ```
+    sudo mkdir eigen3
+    ```
+
+- 下载eigen 3.2.5 https://gitlab.com/libeigen/eigen/-/releases
+
+    ```
+    cd eigen_dir
+    mkdir build 
+    cd build
+    cmake-gui
+    ```
+
+    1. 在UI界面的源代码处输入：`/home/pf/iSoftware/eigen-3.2.5`
+
+    2. build the binaries 处输入：`/home/pf/iSoftware/eigen-3.2.5/build`
+
+    3. 点击configure ，修改：
+
+        ```
+        BUILD_TESTING = true
+        CMAKE_INSTALL_PREFIX = /usr/eigen3
+        ```
+
+        多次点击generate
+
+    4. 然后使用`sudo make install` 即可
+
+### 3.2 安装ceres
+
+- 替换或者修改/ceres-solver/cmake/FindEigen.cmake文件为
+
+    ```cmake
+    macro(EIGEN_REPORT_NOT_FOUND REASON_MSG)
+      unset(EIGEN_FOUND)
+      unset(EIGEN_INCLUDE_DIRS)
+    
+      mark_as_advanced(CLEAR EIGEN_INCLUDE_DIR)
+    
+      if (Eigen_FIND_QUIETLY)
+        message(STATUS "Failed to find Eigen - " ${REASON_MSG} ${ARGN})
+      elseif (Eigen_FIND_REQUIRED)
+        message(FATAL_ERROR "Failed to find Eigen - " ${REASON_MSG} ${ARGN})
+      else()
+    
+        message("-- Failed to find Eigen - " ${REASON_MSG} ${ARGN})
+      endif ()
+      return()
+    endmacro(EIGEN_REPORT_NOT_FOUND)
+     
+    # TODO: Add standard Windows search locations for Eigen.
+    list(APPEND EIGEN_CHECK_INCLUDE_DIRS
+      /usr/eigen3/include/eigen3)
+    # Additional suffixes to try appending to each search path.
+    list(APPEND EIGEN_CHECK_PATH_SUFFIXES
+      eigen3 # Default root directory for Eigen.
+      Eigen/include/eigen3 ) 
+     
+    set(EIGEN_FOUND TRUE)
+    set(EIGEN_INCLUDE_DIR,/usr/eigen3/include/eigen3)
+     
+    # This is on a single line s/t CMake does not interpret it as a list of
+    # elements and insert ';' separators which would result in 3.;2.;0 nonsense.
+    set(EIGEN_VERSION "3.2.5")
+     
+    # Set standard CMake FindPackage variables if found.
+    if (EIGEN_FOUND)
+      set(EIGEN_INCLUDE_DIRS /usr/eigen3/include/eigen3)
+    endif (EIGEN_FOUND)
+     
+    # Handle REQUIRED / QUIET optional arguments and version.
+    include(FindPackageHandleStandardArgs)
+    find_package_handle_standard_args(Eigen
+      REQUIRED_VARS EIGEN_INCLUDE_DIRS
+      VERSION_VAR EIGEN_VERSION)
+    
+    if (EIGEN_FOUND)
+      mark_as_advanced(FORCE EIGEN_INCLUDE_DIR)
+    endif (EIGEN_FOUND)
+    ```
+
+- 即可开始安装
+
+    ```
+    cmake ..
+    make -j4
+    make test
+    sudo make install
+    ```
+
+### 3.3 安装opencv 3.2.0
+
+安装opencv3.2.0以及对应模块，点击[链接](https://blog.csdn.net/Android_WPF/article/details/132734118?spm=1001.2014.3001.5501)即可！
+
+### 3.4 catkin_make编译
+
+如果出错：CSDN一堆，简单修改即可解决！
 
